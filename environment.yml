@@ -1,0 +1,12 @@
+name: kaggle
+channels:
+  - defaults
+dependencies:
+- python>=3.10
+- numpy
+- pandas
+- matplotlib
+- pip
+- joblib
+- pip:
+  - scikit-learn

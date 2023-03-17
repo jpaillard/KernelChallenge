@@ -3,10 +3,11 @@ channels:
   - defaults
 dependencies:
 - python>=3.8
-- numpy
-- pandas
-- matplotlib
 - pip
-- joblib
 - pip:
   - scikit-learn
+  - networkx
+  - numpy
+  - pandas
+  - matplotlib
+  - joblib

@@ -1,4 +1,4 @@
-name: kaggle
+name: KernelChallenge
 channels:
   - defaults
 dependencies:

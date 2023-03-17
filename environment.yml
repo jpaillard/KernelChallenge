@@ -1,12 +1,13 @@
-name: kaggle
+name: KernelChallenge
 channels:
   - defaults
 dependencies:
-- python>=3.10
-- numpy
-- pandas
-- matplotlib
+- python>=3.8
 - pip
-- joblib
 - pip:
   - scikit-learn
+  - networkx
+  - numpy
+  - pandas
+  - matplotlib
+  - joblib

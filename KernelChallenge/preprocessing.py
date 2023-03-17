@@ -24,7 +24,7 @@ def preprocess_one(G: nx.Graph):
     return G.subgraph(Gcc[0])
 
 
-def preprocess(lisg_G: list[nx.Graph],
+def preprocess(lisg_G: list,
                preprocess_f0,
                n_jobs: int = 1,
                **kwargs):

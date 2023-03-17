@@ -2,7 +2,7 @@ name: KernelChallenge
 channels:
   - defaults
 dependencies:
-- python>=3.10
+- python>=3.8
 - numpy
 - pandas
 - matplotlib

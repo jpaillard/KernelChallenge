@@ -1,16 +1,16 @@
 import networkx as nx
+import numpy as np
 import pytest
 
 
-@pytest.fixture(scope='module')
-def dummy_molecule():
+def make_one_graph(n=10):
     G = nx.Graph()
-    G.add_nodes_from([
-        (1, {"labels": [1]}),
-        (2, {"labels": [0]}),
-        (3, {"labels": [1]}),
-        (4, {"labels": [1]}),
-        (5, {"labels": [5]}),
-    ])
-    G.add_edges_from([(1, 2), (1, 3), (2, 4), (4, 5)])
+    G.add_nodes_from([(i, {"labels": [np.random.randint(50)]})
+                     for i in range(n)])
+    G.add_edges_from([(i, i + 1) for i in range(n - 1)])
     return G
+
+
+@pytest.fixture(scope='module')
+def dummy_graphs():
+    return [make_one_graph() for _ in range(10)]

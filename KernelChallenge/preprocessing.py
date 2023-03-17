@@ -1,19 +1,7 @@
 
 import networkx as nx
-import numpy as np
 from joblib import Parallel
 from joblib import delayed
-
-
-def preprocess_one_dummy(G: nx.Graph):
-    '''
-    Compute the vector of size 50 corresponding to the count of each atom
-    present in the graph.
-    '''
-    atoms_list = np.zeros(50, dtype=int)
-    for v in nx.get_node_attributes(G, name="labels").values():
-        atoms_list[v[0]] += 1
-    return atoms_list
 
 
 def preprocess_one(G: nx.Graph):

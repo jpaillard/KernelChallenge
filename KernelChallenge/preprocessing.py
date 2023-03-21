@@ -23,3 +23,14 @@ def preprocess(lisg_G: list,
                                      for G in lisg_G)
 
     return output
+
+
+def WL_preprocess(Gn):
+    for g in Gn:
+        # [labels] --> 'labels'
+        nx.set_node_attributes(
+            g,
+            {k: str(v[0]) for k, v in g.nodes(data='labels')},
+            'labels'
+        )
+    return Gn

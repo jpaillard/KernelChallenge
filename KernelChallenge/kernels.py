@@ -15,10 +15,11 @@ def gramMatrix(X1, X2: np.ndarray, ):
 
 class WesifeilerLehmanKernel():
 
-    def __init__(self, h_iter: int = 2):
+    def __init__(self, h_iter: int = 2, edges: bool = False):
         self.h_iter = h_iter
         self.unique_labels_h = dict()
         self.unique_labels_count = 0
+        self.edges = edges
 
     def fit_subtree(self, G: list):
         """
@@ -27,22 +28,25 @@ class WesifeilerLehmanKernel():
 
         """
         Gn = deepcopy(G)
+
         # 0: Initialization
         unique_labels_0 = []
+
+        # 0.1 : Extract initial labels
         for g in Gn:
             unique_labels_0 += list(nx.get_node_attributes(
                 g, name='labels').values())
-
         unique_labels_0 = np.unique(unique_labels_0)
-        unique_labels = {v: i for i, v in enumerate(unique_labels_0)}
+        unique_labels = {v: i for i, v in enumerate(unique_labels_0)} # dico for mapping
+        
+        # 0.2 : Store initial features
 
         feat_vector_h = np.zeros((len(Gn), len(unique_labels_0)), dtype=int)
         for i, g in enumerate(Gn):
             for node, label in g.nodes(data='labels'):
                 feat_vector_h[i, int(unique_labels[label])] += 1
             feat_vector = feat_vector_h
-        self.unique_labels_h[0] = unique_labels
-
+        self.unique_labels_h[0] = unique_labels # Store initial labels
         # Can be parallelized over depth (h_iter) and/or graphs (Gn)
         for h in range(self.h_iter):
             unique_labels = dict()
@@ -53,13 +57,20 @@ class WesifeilerLehmanKernel():
                 gc = g.copy()
                 for node, label in g.nodes(data='labels'):
 
-                    # 1: Multiset-label determination
-                    multiset_tmp = sorted(
-                        [int(g.nodes[neighbor]['labels'])
-                         for neighbor in g[node]]
-                    )
+                    # 1: Multiset-label determination + Sorting
 
-                    # 2: Sorting each multiset
+                    if self.edges: # Consider edges in the labelling
+                        multiset_tmp = sorted(
+                            [str(g.nodes[neighbor]['labels']) + str(g.edges[node, neighbor]['labels'][0])
+                             for neighbor in g.neighbors(node)]
+                        )
+                    else: # Consider only nodes in the labelling
+                        multiset_tmp = sorted(
+                            [str(g.nodes[neighbor]['labels'])
+                             for neighbor in g.neighbors(node)]
+                        )
+                    # 2: Add eaxh each multiset
+
                     s_i = label + ''.join(str(x) for x in multiset_tmp)
 
                     # 3: Label compression
@@ -85,6 +96,7 @@ class WesifeilerLehmanKernel():
 
             # Stack feature vectors
             feat_vector = np.hstack((feat_vector, feat_vector_h))
+        
         return feat_vector
 
     def predict(self, G):
@@ -116,10 +128,16 @@ class WesifeilerLehmanKernel():
                 for node, label in g.nodes(data='labels'):
 
                     # 1: Multiset-label determination
-                    multiset_tmp = sorted(
-                        [int(g.nodes[neighbor]['labels'])
-                         for neighbor in g[node]]
-                    )
+                    if self.edges: # Consider edges in the labelling
+                        multiset_tmp = sorted(
+                            [str(g.nodes[neighbor]['labels']) + str(g.edges[node, neighbor]['labels'][0])
+                             for neighbor in g.neighbors(node)]
+                        )
+                    else: # Consider only nodes in the labelling
+                        multiset_tmp = sorted(
+                            [str(g.nodes[neighbor]['labels'])
+                             for neighbor in g.neighbors(node)]
+                        )
 
                     # 2: Sorting each multiset
                     s_i = label + ''.join(str(x) for x in multiset_tmp)

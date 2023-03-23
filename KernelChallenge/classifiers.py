@@ -67,7 +67,7 @@ class KernelSVC:
 
         # Assign the required attributes
 
-        active_idx = np.where(self.alpha > self.epsilon)
+        active_idx = np.where(self.alpha > self.epsilon)[0]
         margin_idx = (self.alpha > self.epsilon) * \
             (self.C - self.alpha > self.epsilon)
         self.active_alphaY = self.alpha[active_idx] * y[active_idx]

@@ -72,6 +72,9 @@ class KernelSVC:
             (self.C - self.alpha > self.epsilon)
         self.active_alphaY = self.alpha[active_idx] * y[active_idx]
         self.active = X[active_idx]
+        self.active_features = features_X[active_idx]
+        print(f"active idx: {len(active_idx)}")
+        print(f"total idx: {len(X)}")
         # A matrix with each row corresponding to a point that falls on the
         # margin -
         self.support = X[margin_idx]
@@ -84,9 +87,8 @@ class KernelSVC:
     def separating_function(self, x):
         # Input : matrix x of shape N data points times d dimension
         # Output: vector of size N
-        features_X = self.kernel.predict(self.active)
         features_x = self.kernel.predict(x)
-        K_Xx = gramMatrix(features_x, features_X)
+        K_Xx = gramMatrix(features_x, self.active_features)
         return np.einsum('i, ji -> j', self.active_alphaY, K_Xx)
 
     def predict(self, X):

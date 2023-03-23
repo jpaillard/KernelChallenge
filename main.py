@@ -70,12 +70,14 @@ if __name__ == '__main__':
     print("=========================================")
     print("\nAUC score on {:d} samples using WL kernel :  {:.2f} ".format(
         args.n, np.mean(scores)))
-
     print("\n=========================================")
 
-    # TODO : Retrain on the whole training set using CValidated parameters
-
     if args.submit:
-        Gn = WL_preprocess(test_data)
+        clf = KernelSVC(
+            C=args.c,
+            kernel=WesifeilerLehmanKernel(h_iter=args.h_iter,
+                                          edges=args.edges)
+        )
+        clf.fit(Gn, labels)
         y_pred = clf.predict(Gn)
         pd.DataFrame(y_pred).to_csv('y_pred.csv', index=False)

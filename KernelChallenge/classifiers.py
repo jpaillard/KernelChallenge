@@ -1,7 +1,10 @@
 import numpy as np
-from scipy import optimize
+from cvxopt import matrix
+from cvxopt import solvers
 
 from KernelChallenge.kernels import gramMatrix
+
+# from scipy import optimize
 
 
 class KernelSVC:
@@ -21,51 +24,64 @@ class KernelSVC:
         # k = self.kernel(X, X)
         features_X = self.kernel.fit_subtree(X)
         k = gramMatrix(features_X, features_X)
-        M = np.einsum('i,j,ij->ij', y, y, k)
-        u = np.ones(N)
-        A = np.vstack((np.diag(-np.ones(N)), np.diag(np.ones(N))))
-        b = np.hstack((np.zeros(N), self.C * np.ones(N)))
+        P = matrix(np.einsum('i,j,ij->ij', y, y, k).astype('float'))
+        q = matrix(-np.ones(N).astype('float'))
+        G = matrix(np.vstack((
+            np.diag(-np.ones(N)),
+            np.diag(np.ones(N)))).astype('float'))
+        h = matrix(np.hstack((
+            np.zeros(N),
+            self.C * np.ones(N))).astype('float'))
+        A = matrix(y.reshape(1, -1).astype('float'))
+        b = matrix(np.zeros(1).astype('float'))
 
-        # Lagrange dual problem
-        def loss(alpha):
-            return alpha.T @ M @ alpha / 2 - \
-                alpha.sum()  # dual loss
+        optRes = solvers.qp(P, q, G, h, A, b)
+        self.alpha = np.array(optRes['x']).flatten()
+        # M = np.einsum('i,j,ij->ij', y, y, k)
+        # u = np.ones(N)
+        # A = np.vstack((np.diag(-np.ones(N)), np.diag(np.ones(N))))
+        # b = np.hstack((np.zeros(N), self.C * np.ones(N)))
 
-        # Partial derivate of Ld on alpha
-        def grad_loss(alpha):
-            return M @ alpha - \
-                u  # --partial derivative of the dual loss wrt alpha
+        # # Lagrange dual problem
+        # def loss(alpha):
+        #     return alpha.T @ M @ alpha / 2 - \
+        #         alpha.sum()  # dual loss
 
-        # Constraints on alpha of the shape :
-        # -  d - C*alpha  = 0
-        # -  b - A*alpha >= 0
+        # # Partial derivate of Ld on alpha
+        # def grad_loss(alpha):
+        #     return M @ alpha - \
+        #         u  # --partial derivative of the dual loss wrt alpha
 
-        def fun_eq(alpha):
-            return np.dot(
-                alpha, y)  # --function defining the equality constraint
+        # # Constraints on alpha of the shape :
+        # # -  d - C*alpha  = 0
+        # # -  b - A*alpha >= 0
 
-        def jac_eq(alpha):
-            return y  # --jacobian wrt alpha of the  equality constraint
+        # def fun_eq(alpha):
+        #     return np.dot(
+        #         alpha, y)  # --function defining the equality constraint
 
-        def fun_ineq(alpha):
-            return b - A @ alpha  # function defining the inequality constraint
+        # def jac_eq(alpha):
+        #     return y  # --jacobian wrt alpha of the  equality constraint
 
-        def jac_ineq(alpha):
-            return -A  # -jacobian wrt alpha of the  inequality constraint
+        # def fun_ineq(alpha):
+        # return b - A @ alpha  # function defining the inequality constraint
 
-        constraints = ({'type': 'eq', 'fun': fun_eq, 'jac': jac_eq},
-                       {'type': 'ineq',
-                        'fun': fun_ineq,
-                        'jac': jac_ineq})
+        # def jac_ineq(alpha):
+        #     return -A  # -jacobian wrt alpha of the  inequality constraint
 
-        optRes = optimize.minimize(fun=lambda alpha: loss(alpha),
-                                   x0=np.ones(N),
-                                   method='SLSQP',
-                                   jac=lambda alpha: grad_loss(alpha),
-                                   constraints=constraints)
-        self.alpha = optRes.x
+        # constraints = ({'type': 'eq', 'fun': fun_eq, 'jac': jac_eq},
+        #                {'type': 'ineq',
+        #                 'fun': fun_ineq,
+        #                 'jac': jac_ineq})
+
+        # optRes = optimize.minimize(fun=lambda alpha: loss(alpha),
+        #                            x0=np.ones(N),
+        #                            method='SLSQP',
+        #                            jac=lambda alpha: grad_loss(alpha),
+        #                            constraints=constraints)
 
         # Assign the required attributes
+        # self.alpha = optRes.x
 
         active_idx = np.where(self.alpha > self.epsilon)[0]
         margin_idx = (self.alpha > self.epsilon) * \
@@ -94,4 +110,5 @@ class KernelSVC:
     def predict(self, X):
         """ Predict y values in {-1, 1} """
         d = self.separating_function(X)
-        return 2 * (d + self.b > 0) - 1
+        # return 2 * (d + self.b > 0) - 1
+        return 2 * (d - self.b) - 1

@@ -11,9 +11,13 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
 from KernelChallenge.classifiers import KernelSVC
+from KernelChallenge.KLR import KernelLogisticRegression
 from KernelChallenge.kernels import WesifeilerLehmanKernel
 # from KernelChallenge.kernels import gramMatrix
 from KernelChallenge.preprocessing import WL_preprocess
+
+from wwl import wwl
+
 
 # from sklearn.svm import SVC
 
@@ -24,18 +28,29 @@ def parse_args():
     parser.add_argument('--n', type=int, default=1000)
     parser.add_argument('--h_iter', type=int, default=2)
     parser.add_argument('--c', type=int, default=1000)
+    parser.add_argument('--method', type=str, default="SVC")
     parser.add_argument('--edges', action='store_true')
     parser.add_argument('--submit', action='store_true')
     return parser.parse_args()
 
 
 def fit_predict_one(Gn, labels, train_index, test_index,
-                    metric=roc_auc_score, c=1000, h_iter=2, edges=False):
+                    metric=roc_auc_score, c=100, h_iter=2, edges=False, method = "SVC"):
     X_train, X_test = Gn[train_index], Gn[test_index]
     y_train, y_test = labels[train_index], labels[test_index]
+    
+    
+    
+    
+    
     WLK = WesifeilerLehmanKernel(h_iter=h_iter, edges=edges)
 
-    clf = KernelSVC(C=c, kernel=WLK)
+    if method == "SVC":
+        clf = KernelSVC(C=c, kernel=WLK)
+
+    elif method == "KLR":
+        clf = KernelLogisticRegression(reg_param= c, kernel = WLK)
+    
     clf.fit(X_train, y_train)
     score = metric(y_test, clf.predict(X_test))
     print("AUC score on test set : {:.2f}".format(score))
@@ -58,18 +73,7 @@ if __name__ == '__main__':
 
     Gn = WL_preprocess(Gn)
 
-    klf = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)
-    # scores = Parallel(
-    #     n_jobs=5)(
-    #         delayed(fit_predict_one)(
-    #             Gn,
-    #             labels,
-    #             train_index,
-    #             test_index,
-    #             c=args.c,
-    #             h_iter=args.h_iter,
-    #             edges=args.edges)
-    #     for train_index, test_index in klf.split(Gn, labels))
+    #  klf = StratifiedKFold(n_splits=5, shuffle=True, random_state=0) Think about performing K fold
 
     N = len(Gn)
     t0 = time()
@@ -79,11 +83,12 @@ if __name__ == '__main__':
                              np.arange(N * 4 // 5, N),
                              c=args.c,
                              h_iter=args.h_iter,
-                             edges=args.edges)
+                             edges=args.edges,
+                             method = args.method)
 
     print("=========================================")
-    print("\nAUC score on {:d} samples using WL kernel :  {:.2f} ".format(
-        args.n, np.mean(scores)))
+    print(f"C = {args.c}")
+    print(f"\nAUC score on {args.n} samples using WL kernel and {args.method} :  {np.mean(scores)} ")
     print("Time : {:.2f} s".format(time() - t0))
     print("\n=========================================")
 

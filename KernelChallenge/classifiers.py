@@ -4,7 +4,6 @@ from cvxopt import solvers
 
 from KernelChallenge.kernels import gramMatrix
 
-
 # from scipy import optimize
 
 
@@ -25,8 +24,8 @@ class KernelSVC:
         # k = self.kernel(X, X)
         features_X = self.kernel.fit_subtree(X)
         k = gramMatrix(features_X, features_X)
-    
-        print(k.shape )
+
+        print(k.shape)
         P = matrix(np.einsum('i,j,ij->ij', y, y, k).astype('float'))
         q = matrix(-np.ones(N).astype('float'))
         G = matrix(np.vstack((
@@ -113,5 +112,5 @@ class KernelSVC:
     def predict(self, X):
         """ Predict y values in {-1, 1} """
         d = self.separating_function(X)
-        return 2 * (d + self.b > 0) - 1
-        # return 2 * (d + self.b) - 1
+        # return 2 * (d + self.b > 0) - 1
+        return d + self.b

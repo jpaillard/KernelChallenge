@@ -2,3 +2,4 @@ KernelChallenge.egg-info/
 *.pyc
 data/
 *.json
+*.csv

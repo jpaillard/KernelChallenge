@@ -27,6 +27,7 @@ class WesifeilerLehmanKernel():
         https://www.jmlr.org/papers/volume12/shervashidze11a/shervashidze11a.pdf
 
         """
+        print('Fit')
         Gn = deepcopy(G)
 
         # 0: Initialization
@@ -54,6 +55,7 @@ class WesifeilerLehmanKernel():
             unique_labels_count = 0
 
             # iterate over all graphs
+            print(f'Compute features at depth {h + 1}')
             for idx, g in enumerate(tqdm(Gn)):
                 gc = g.copy()
                 for node, label in g.nodes(data='labels'):
@@ -106,6 +108,7 @@ class WesifeilerLehmanKernel():
         Same as above but ensures that the feature vectors have the same shape
         in train and test.
         """
+        print('predict')
         Gn = deepcopy(G)
 
         feat_vector_h = np.zeros(
@@ -124,6 +127,7 @@ class WesifeilerLehmanKernel():
             s_i_list = []
 
             # iterate over all graphs
+            print(f'Compute features at depth {h + 1}')
             for idx, g in enumerate(tqdm(Gn)):
                 gc = g.copy()
                 s_i_tmp = []

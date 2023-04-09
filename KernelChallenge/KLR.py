@@ -54,7 +54,7 @@ class KernelLogisticRegression:
         print(features_pred.shape, self.features.shape)
         K_Xx = gramMatrix(features_pred, self.features)
         predictions = sigmoid(np.einsum('i, ij->j', self.alpha, K_Xx.T)) 
-        return - predictions # *-1 because inverted prediction on 1 et -1
+        return predictions # *-1 because inverted prediction on 1 et -1
 
 def logistic(u):
     return np.log(1 + np.exp(-u))

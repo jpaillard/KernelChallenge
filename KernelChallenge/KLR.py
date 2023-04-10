@@ -40,13 +40,15 @@ class KernelLogisticRegression:
             #Solve Weighted KRR
 
             sqrt_W =np.sqrt(W)
-            
+                    
             
             alpha_old = alpha 
             alpha = sqrt_W@np.linalg.inv(sqrt_W@k@sqrt_W+ N*self.reg_param*np.eye(N))@sqrt_W@z
 
         self.alpha = alpha
         self.features = features_X
+
+        return sigmoid(np.einsum('i, ij->j', self.alpha, k))
         
 
     def predict(self,X):

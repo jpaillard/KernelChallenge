@@ -46,10 +46,12 @@ def fit_predict_one(Gn, labels, train_index, test_index,
     elif method == "KLR":
         clf = KernelLogisticRegression(reg_param=c, kernel=WLK)
 
-    clf.fit(X_train, y_train)
-    score = metric(y_test, clf.predict(X_test))
-    print("AUC score on test set : {:.2f}".format(score))
-    return score
+    predict_train  = clf.fit(X_train, y_train)
+    score_train = metric(y_train, predict_train)
+    score_test = metric(y_test, clf.predict(X_test))
+    print("AUC score on train set : {:.2f}".format(score_train))
+    print("AUC score on test set : {:.2f}".format(score_test))
+    return score_train, score_test
 
 
 if __name__ == '__main__':
@@ -85,20 +87,23 @@ if __name__ == '__main__':
     print("=========================================")
     print(f"C = {args.c}")
     print(
-        f"\nAUC score on {args.n} samples using WL kernel and {args.method} :  {np.mean(scores)} ")
+        f"\nAUC score on {args.n} samples using WL kernel and {args.method} :  {np.mean(scores[1])} ")
     print("Time : {:.2f} s".format(time() - t0))
     print("\n=========================================")
 
     if args.submit:
         test_data = pd.read_pickle(data_path / 'test_data.pkl')
-        clf = KernelSVC(
-            C=args.c,
-            kernel=WesifeilerLehmanKernel(h_iter=args.h_iter,
+        WLK = WesifeilerLehmanKernel(h_iter=args.h_iter,
                                           edges=args.edges)
-        )
+        if args.method == "SVC":
+            clf = KernelSVC(C=args.c, kernel=WLK)
+
+        elif args.method == "KLR":
+            clf = KernelLogisticRegression(reg_param=args.c, kernel=WLK)
+    
         clf.fit(Gn, labels)
 
         Gn_test = WL_preprocess(test_data)
         y_pred = clf.predict(Gn_test)
-        pd.DataFrame(y_pred).to_csv('y_pred.csv', index=False)
+        pd.DataFrame(y_pred).to_csv(f'y_pred_m_{args.method}_c_{args.c}_h_{args.h_iter}_edges_{args.edges}_auc_tr_{round(scores[0],4)}_val_{round(scores[1],4)}.csv', index=False)
         print(y_pred[0:10])  # chceck for first prediction

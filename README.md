@@ -1,5 +1,7 @@
-# Kernel Methods Kaggle Challenge
+# Data Challenge - Kernel methods
 [![codecov](https://codecov.io/github/jpaillard/KernelChallenge/branch/master/graph/badge.svg?token=TJZSQ80QCV)](https://codecov.io/github/jpaillard/KernelChallenge)
+
+[https://www.kaggle.com/competitions/data-challenge-kernel-methods-2022-2023](https://www.kaggle.com/competitions/data-challenge-kernel-methods-2022-2023)
 
 
 ## Install
@@ -37,3 +39,31 @@ options:
 ` 
 python main.py --method SVC --n 6000 --c 0.01 --submit --h_iter 1 --edges
 `
+
+## Description
+```
+.
+├── KernelChallenge       # Main package
+│   ├── kernels.py        # WL kernel implementation
+│   ├── SVC.py            # SVC implementation
+|   ├── KLR.py            # KLR implementation
+|   ├── preprocessing.py  # preprocessing scripts before WL kernel
+│   └── ...
+├── tests                 # PyTest scripts
+│   └── ...
+├── environment.yml       # Conda environment
+├── format_output.py      # script to format the prediction for kaggle competition   
+├── main.py               # executable script
+└── ...
+```
+
+Implementation of the Weisfeiler-lehman kernel for graph classification. And two kernel methods classification algorithms: SVR and KLR. 
+
+```BibTex
+@article{shervashidze2011weisfeiler,
+  title={Weisfeiler-lehman graph kernels.},
+  author={Shervashidze, Nino and Schweitzer, Pascal and Van Leeuwen, Erik Jan and Mehlhorn, Kurt and Borgwardt, Karsten M},
+  journal={Journal of Machine Learning Research},
+  year={2011}
+}
+```

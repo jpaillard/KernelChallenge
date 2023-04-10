@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     np.random.seed(0)
     idx = np.random.choice(len(train_data), args.n, replace=False)
-    Gn = np.array(train_data)[idx]
+    Gn = np.array(train_data, dtype=object)[idx]
     labels = labels[idx]
 
     Gn = WL_preprocess(Gn)

@@ -14,13 +14,40 @@ from KernelChallenge.SVC import KernelSVC
 
 def parse_args():
     parser = ArgumentParser()
-    parser.add_argument('--data_path', type=str, default='data/')
-    parser.add_argument('--n', type=int, default=1000)
-    parser.add_argument('--h_iter', type=int, default=2)
-    parser.add_argument('--c', type=float, default=1)
-    parser.add_argument('--method', type=str, default="SVC")
-    parser.add_argument('--edges', action='store_true')
-    parser.add_argument('--submit', action='store_true')
+    parser.add_argument(
+        '--data_path',
+        type=str,
+        default='data/',
+        help='Path to folder that contains the dataset (.pkl files)')
+    parser.add_argument(
+        '--n',
+        type=int,
+        default=1000,
+        help='Number of samples from the dataset to use for training')
+    parser.add_argument(
+        '--h_iter',
+        type=int,
+        default=2,
+        help='Number of iterations (depth) for the WL algorithm')
+    parser.add_argument(
+        '--c',
+        type=float,
+        default=1,
+        help='Regularization parameter for the classifier')
+    parser.add_argument(
+        '--method',
+        type=str,
+        default="SVC",
+        help='Classifier to use (SVC or KLR)')
+    parser.add_argument(
+        '--edges',
+        action='store_true',
+        help='Use edge embedding in the WL algorithm (see report for more '
+        'details)')
+    parser.add_argument(
+        '--submit',
+        action='store_true',
+        help='create submission file for the challenge')
     return parser.parse_args()
 
 

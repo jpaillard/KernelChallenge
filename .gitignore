@@ -3,3 +3,4 @@ KernelChallenge.egg-info/
 data/
 *.json
 *.csv
+*.ipynb

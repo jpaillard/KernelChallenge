@@ -52,7 +52,8 @@ class KernelSVC:
 
         f = self.separating_function(self.active)
         self.b = (y[active_idx] - f).mean()  # offset of the classifier-
-        return self.separating_function(X) + self.b
+        return np.einsum('i, ji -> j',
+                         self.active_alphaY, k[:, active_idx]) + self.b
 
     # Implementation of the separting function $f$
     def separating_function(self, x):

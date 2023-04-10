@@ -1,24 +1,15 @@
-# import cProfile
 from argparse import ArgumentParser
 from pathlib import Path
 from time import time
 
 import numpy as np
 import pandas as pd
-# from joblib import Parallel
-# from joblib import delayed
 from sklearn.metrics import roc_auc_score
 
 from KernelChallenge.classifiers import KernelSVC
 from KernelChallenge.kernels import WesifeilerLehmanKernel
 from KernelChallenge.KLR import KernelLogisticRegression
-# from KernelChallenge.kernels import gramMatrix
 from KernelChallenge.preprocessing import WL_preprocess
-
-# from sklearn.model_selection import StratifiedKFold
-
-
-# from sklearn.svm import SVC
 
 
 def parse_args():
@@ -34,7 +25,8 @@ def parse_args():
 
 
 def fit_predict_one(Gn, labels, train_index, test_index,
-                    metric=roc_auc_score, c=100, h_iter=2, edges=False, method="SVC"):
+                    metric=roc_auc_score, c=100, h_iter=2, edges=False,
+                    method="SVC"):
     X_train, X_test = Gn[train_index], Gn[test_index]
     y_train, y_test = labels[train_index], labels[test_index]
 
@@ -68,9 +60,6 @@ if __name__ == '__main__':
 
     Gn = WL_preprocess(Gn)
 
-    # klf = StratifiedKFold(n_splits=5, shuffle=True, random_state=0) Think
-    # about performing K fold
-
     N = len(Gn)
     t0 = time()
     scores = fit_predict_one(Gn,
@@ -85,7 +74,8 @@ if __name__ == '__main__':
     print("=========================================")
     print(f"C = {args.c}")
     print(
-        f"\nAUC score on {args.n} samples using WL kernel and {args.method} :  {np.mean(scores)} ")
+        f"\nAUC score on {args.n} samples using WL kernel and {args.method} : \
+            {np.mean(scores)} ")
     print("Time : {:.2f} s".format(time() - t0))
     print("\n=========================================")
 

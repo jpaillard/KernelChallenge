@@ -11,4 +11,6 @@ dependencies:
   - pandas
   - matplotlib
   - joblib
-  - tqdm
+  - tqdm 
+  - cvxopt
+  - setuptools

@@ -1,5 +1,6 @@
 import networkx as nx
 import numpy as np
+import pandas as pd
 import pytest
 
 
@@ -56,3 +57,10 @@ def WL_graphs():
         (5, 6, {"labels": [1]}),
     ])
     return [G1, G2]
+
+
+@pytest.fixture(scope='module')
+def data():
+    data = pd.read_pickle('tests/data.pkl')
+    labels = pd.read_pickle('tests/labels.pkl')
+    return data, labels

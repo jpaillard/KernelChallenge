@@ -1,24 +1,15 @@
-# import cProfile
 from argparse import ArgumentParser
 from pathlib import Path
 from time import time
 
 import numpy as np
 import pandas as pd
-# from joblib import Parallel
-# from joblib import delayed
 from sklearn.metrics import roc_auc_score
 
-from KernelChallenge.classifiers import KernelSVC
 from KernelChallenge.kernels import WesifeilerLehmanKernel
 from KernelChallenge.KLR import KernelLogisticRegression
-# from KernelChallenge.kernels import gramMatrix
 from KernelChallenge.preprocessing import WL_preprocess
-
-# from sklearn.model_selection import StratifiedKFold
-
-
-# from sklearn.svm import SVC
+from KernelChallenge.SVC import KernelSVC
 
 
 def parse_args():
@@ -34,7 +25,8 @@ def parse_args():
 
 
 def fit_predict_one(Gn, labels, train_index, test_index,
-                    metric=roc_auc_score, c=100, h_iter=2, edges=False, method="SVC"):
+                    metric=roc_auc_score, c=100, h_iter=2, edges=False,
+                    method="SVC"):
     X_train, X_test = Gn[train_index], Gn[test_index]
     y_train, y_test = labels[train_index], labels[test_index]
 
@@ -46,8 +38,7 @@ def fit_predict_one(Gn, labels, train_index, test_index,
     elif method == "KLR":
         clf = KernelLogisticRegression(reg_param=c, kernel=WLK)
 
-    predict_train  = clf.fit(X_train, y_train)
-    print(y_train.shape,predict_train.shape)
+    predict_train = clf.fit(X_train, y_train)
     score_train = metric(y_train, predict_train)
     score_test = metric(y_test, clf.predict(X_test))
     print("AUC score on train set : {:.2f}".format(score_train))
@@ -66,13 +57,10 @@ if __name__ == '__main__':
 
     np.random.seed(0)
     idx = np.random.choice(len(train_data), args.n, replace=False)
-    Gn = np.array(train_data)[idx]
+    Gn = np.array(train_data, dtype=object)[idx]
     labels = labels[idx]
 
     Gn = WL_preprocess(Gn)
-
-    # klf = StratifiedKFold(n_splits=5, shuffle=True, random_state=0) Think
-    # about performing K fold
 
     N = len(Gn)
     t0 = time()
@@ -88,23 +76,28 @@ if __name__ == '__main__':
     print("=========================================")
     print(f"C = {args.c}")
     print(
-        f"\nAUC score on {args.n} samples using WL kernel and {args.method} :  {np.mean(scores[1])} ")
+        f"\nAUC score on {args.n} samples using WL kernel and {args.method} : \
+            {np.mean(scores[1])} ")
     print("Time : {:.2f} s".format(time() - t0))
     print("\n=========================================")
 
     if args.submit:
         test_data = pd.read_pickle(data_path / 'test_data.pkl')
         WLK = WesifeilerLehmanKernel(h_iter=args.h_iter,
-                                          edges=args.edges)
+                                     edges=args.edges)
         if args.method == "SVC":
             clf = KernelSVC(C=args.c, kernel=WLK)
 
         elif args.method == "KLR":
             clf = KernelLogisticRegression(reg_param=args.c, kernel=WLK)
-    
+
         clf.fit(Gn, labels)
 
         Gn_test = WL_preprocess(test_data)
         y_pred = clf.predict(Gn_test)
-        pd.DataFrame(y_pred).to_csv(f'y_pred_m_{args.method}_c_{args.c}_h_{args.h_iter}_edges_{args.edges}_auc_tr_{round(scores[0],4)}_val_{round(scores[1],4)}.csv', index=False)
+        pd.DataFrame(y_pred).to_csv(
+            f'y_pred_m_{args.method}_c_{args.c}_h_{args.h_iter}\
+                _edges_{args.edges}_auc_tr_{round(scores[0],4)}\
+                    _val_{round(scores[1],4)}.csv',
+            index=False)
         print(y_pred[0:10])  # chceck for first prediction

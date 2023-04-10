@@ -76,7 +76,8 @@ if __name__ == '__main__':
     print("=========================================")
     print(f"C = {args.c}")
     print(
-        f"\nAUC score on {args.n} samples using WL kernel and {args.method} :  {np.mean(scores[1])} ")
+        f"\nAUC score on {args.n} samples using WL kernel and {args.method} : \
+            {np.mean(scores[1])} ")
     print("Time : {:.2f} s".format(time() - t0))
     print("\n=========================================")
 
@@ -95,6 +96,8 @@ if __name__ == '__main__':
         Gn_test = WL_preprocess(test_data)
         y_pred = clf.predict(Gn_test)
         pd.DataFrame(y_pred).to_csv(
-            f'y_pred_m_{args.method}_c_{args.c}_h_{args.h_iter}_edges_{args.edges}_auc_tr_{round(scores[0],4)}_val_{round(scores[1],4)}.csv',
+            f'y_pred_m_{args.method}_c_{args.c}_h_{args.h_iter}\
+                _edges_{args.edges}_auc_tr_{round(scores[0],4)}\
+                    _val_{round(scores[1],4)}.csv',
             index=False)
         print(y_pred[0:10])  # chceck for first prediction

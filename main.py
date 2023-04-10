@@ -6,10 +6,10 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 
-from KernelChallenge.classifiers import KernelSVC
 from KernelChallenge.kernels import WesifeilerLehmanKernel
 from KernelChallenge.KLR import KernelLogisticRegression
 from KernelChallenge.preprocessing import WL_preprocess
+from KernelChallenge.SVC import KernelSVC
 
 
 def parse_args():

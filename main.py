@@ -47,6 +47,7 @@ def fit_predict_one(Gn, labels, train_index, test_index,
         clf = KernelLogisticRegression(reg_param=c, kernel=WLK)
 
     predict_train  = clf.fit(X_train, y_train)
+    print(y_train.shape,predict_train.shape)
     score_train = metric(y_train, predict_train)
     score_test = metric(y_test, clf.predict(X_test))
     print("AUC score on train set : {:.2f}".format(score_train))

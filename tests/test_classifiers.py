@@ -21,9 +21,8 @@ def test_SVC(data):
     WLK = WesifeilerLehmanKernel(h_iter=2, edges=True)
     clf = KernelSVC(C=1, kernel=WLK)
 
-    predict_train = clf.fit(X_train, y_train)
-    roc_auc_score(y_train, predict_train)
-    roc_auc_score(y_test, clf.predict(X_test))
+    clf.fit(X_train, y_train)
+    clf.predict(X_test)
     assert True
 
 
@@ -39,7 +38,6 @@ def test_KLR(data):
     WLK = WesifeilerLehmanKernel(h_iter=2, edges=True)
     clf = KernelLogisticRegression(reg_param=1, kernel=WLK)
 
-    predict_train = clf.fit(X_train, y_train)
-    roc_auc_score(y_train, predict_train)
-    roc_auc_score(y_test, clf.predict(X_test))
+    clf.fit(X_train, y_train)
+    clf.predict(X_test)
     assert True

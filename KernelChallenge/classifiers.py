@@ -37,51 +37,6 @@ class KernelSVC:
 
         optRes = solvers.qp(P, q, G, h, A, b)
         self.alpha = np.array(optRes['x']).flatten()
-        # M = np.einsum('i,j,ij->ij', y, y, k)
-        # u = np.ones(N)
-        # A = np.vstack((np.diag(-np.ones(N)), np.diag(np.ones(N))))
-        # b = np.hstack((np.zeros(N), self.C * np.ones(N)))
-
-        # # Lagrange dual problem
-        # def loss(alpha):
-        #     return alpha.T @ M @ alpha / 2 - \
-        #         alpha.sum()  # dual loss
-
-        # # Partial derivate of Ld on alpha
-        # def grad_loss(alpha):
-        #     return M @ alpha - \
-        #         u  # --partial derivative of the dual loss wrt alpha
-
-        # # Constraints on alpha of the shape :
-        # # -  d - C*alpha  = 0
-        # # -  b - A*alpha >= 0
-
-        # def fun_eq(alpha):
-        #     return np.dot(
-        #         alpha, y)  # --function defining the equality constraint
-
-        # def jac_eq(alpha):
-        #     return y  # --jacobian wrt alpha of the  equality constraint
-
-        # def fun_ineq(alpha):
-        # return b - A @ alpha  # function defining the inequality constraint
-
-        # def jac_ineq(alpha):
-        #     return -A  # -jacobian wrt alpha of the  inequality constraint
-
-        # constraints = ({'type': 'eq', 'fun': fun_eq, 'jac': jac_eq},
-        #                {'type': 'ineq',
-        #                 'fun': fun_ineq,
-        #                 'jac': jac_ineq})
-
-        # optRes = optimize.minimize(fun=lambda alpha: loss(alpha),
-        #                            x0=np.ones(N),
-        #                            method='SLSQP',
-        #                            jac=lambda alpha: grad_loss(alpha),
-        #                            constraints=constraints)
-
-        # Assign the required attributes
-        # self.alpha = optRes.x
 
         active_idx = np.where(self.alpha > self.epsilon)[0]
         margin_idx = (self.alpha > self.epsilon) * \
@@ -99,7 +54,6 @@ class KernelSVC:
         self.b = (y[active_idx] - f).mean()  # offset of the classifier-
 
     # Implementation of the separting function $f$
-
     def separating_function(self, x):
         # Input : matrix x of shape N data points times d dimension
         # Output: vector of size N

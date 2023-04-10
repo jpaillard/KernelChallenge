@@ -4,8 +4,6 @@ from cvxopt import solvers
 
 from KernelChallenge.kernels import gramMatrix
 
-# from scipy import optimize
-
 
 class KernelSVC:
 

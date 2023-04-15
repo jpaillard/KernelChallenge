@@ -3,6 +3,8 @@
 
 [https://www.kaggle.com/competitions/data-challenge-kernel-methods-2022-2023](https://www.kaggle.com/competitions/data-challenge-kernel-methods-2022-2023)
 
+Please refer to the `report.pdf` file to learn more about the project and the methods.
+
 
 ## Install
 ```
@@ -41,6 +43,7 @@ python main.py --method SVC --n 6000 --c 0.01 --submit --h_iter 1 --edges
 `
 
 ## Description
+### Architecture
 ```
 .
 ├── KernelChallenge       # Main package
@@ -59,6 +62,7 @@ python main.py --method SVC --n 6000 --c 0.01 --submit --h_iter 1 --edges
 ```
 
 Implementation of the Weisfeiler-lehman kernel for graph classification. And two kernel methods classification algorithms: SVR and KLR. 
+
 
 ```BibTex
 @article{shervashidze2011weisfeiler,

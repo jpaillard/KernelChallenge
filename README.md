@@ -54,6 +54,7 @@ python main.py --method SVC --n 6000 --c 0.01 --submit --h_iter 1 --edges
 ├── environment.yml       # Conda environment
 ├── format_output.py      # script to format the prediction for kaggle competition   
 ├── main.py               # executable script
+├── report.pdf            # Report presenting the project
 └── ...
 ```
 
